@@ -65,7 +65,7 @@ if (typeof window !== 'undefined') {
 }
 
 // Function to classify error types based on response and error details
-const classifyError = (error: any): SupabaseErrorType => {
+export const classifyError = (error: any): SupabaseErrorType => {
   // Check for browser environment before accessing navigator
   const isOffline = typeof window !== 'undefined' && typeof navigator !== 'undefined' && !navigator.onLine;
   
@@ -207,7 +207,7 @@ const enhancedFetch = async (...args: Parameters<typeof fetch>) => {
 };
 
 // Retry strategy with exponential backoff
-const withRetry = async (fn, maxRetries = 3) => {
+export const withRetry = async (fn: () => Promise<any>, maxRetries = 3) => {
   let lastError;
   
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
