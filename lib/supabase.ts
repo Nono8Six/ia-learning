@@ -1,16 +1,9 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { env } from '@/lib/env';
 
-// Get environment variables (required in all environments)
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-if (!supabaseUrl) {
-  throw new Error('NEXT_PUBLIC_SUPABASE_URL environment variable is not defined');
-}
-
-if (!supabaseAnonKey) {
-  throw new Error('NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable is not defined');
-}
+// Get environment variables with validation
+const supabaseUrl = env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 // Enum for error types to better categorize different failures
 export enum SupabaseErrorType {
@@ -303,7 +296,11 @@ const options = {
 };
 
 // Create and export the Supabase client
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, options);
+export const supabase = createClientComponentClient({
+  supabaseUrl,
+  supabaseKey: supabaseAnonKey,
+  options,
+});
 
 // Detailed connection test function
 export const testSupabaseConnection = async () => {
