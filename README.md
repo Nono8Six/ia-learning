@@ -62,7 +62,14 @@ Pour lancer les tests unitaires Vitest :
 npm run test
 ```
 
+## codex/ajouter-des-tests-pour-authcontext-et-admincontext
+Les tests couvrent les contextes d'authentification et d'administration ainsi
+que plusieurs composants React. Ils utilisent React Testing Library pour simuler
+les interactions utilisateur.
+=======
+=======
 Le lint et les tests sont exécutés automatiquement via GitHub Actions pour chaque pull request.
+## main
 
 ## Licence
 
