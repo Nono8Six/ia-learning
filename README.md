@@ -30,10 +30,14 @@ Ce projet utilise Supabase pour l'authentification des utilisateurs avec les fon
 
 ## Développement
 
+## <<<<<<< codex/créer-dossier-.codex-et-script-setup.sh
+1. Installez Node et les dépendances en exécutant le script :
+=======
 1. Utilisez Node.js 20 (voir le fichier `.nvmrc`).
 2. Installez les dépendances :
+## >>>>>>> main
 ```bash
-npm install
+./.codex/setup.sh
 ```
 
 3. Copiez `.env.example` en `.env` et remplissez les variables d'environnement :
