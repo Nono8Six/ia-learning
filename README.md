@@ -54,6 +54,16 @@ npm run dev
 - `/middleware.ts` - Middleware Next.js pour protéger les routes
 - `/app/auth` - Pages d'authentification
 
+## codex/créer-tests-pour-supabase.ts-avec-jest-ou-vitest
+## Tests
+
+Pour lancer les tests unitaires Vitest :
+```bash
+npm run test
+```
+=======
+
 ## Licence
 
 Ce projet est distribué sous licence [MIT](LICENSE).
+# main
