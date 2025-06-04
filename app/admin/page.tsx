@@ -17,7 +17,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<AdminTab>("dashboard");
-  const { isAdmin, isLoading, error } = useAdmin();
+  const { isAdmin, isLoading, error, offlineMode } = useAdmin();
   const router = useRouter();
   const [retryCount, setRetryCount] = useState(0);
 
@@ -85,7 +85,7 @@ export default function AdminPage() {
     );
   }
 
-  // Si l'utilisateur n'est pas administrateur, afficher un message d'erreur
+  // Si l'utilisateur n'est pas administrateur
   if (!isAdmin) {
     return (
       <div className="pt-32 pb-16 flex items-center justify-center min-h-screen">
@@ -94,7 +94,9 @@ export default function AdminPage() {
             <Alert variant="destructive" className="mb-4">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                Vous n'avez pas les droits d'accès à cette page.
+                {offlineMode
+                  ? "L'interface d'administration est indisponible hors ligne."
+                  : "Vous n'avez pas les droits d'accès à cette page."}
               </AlertDescription>
             </Alert>
             <Button className="w-full" onClick={() => router.push('/dashboard')}>
