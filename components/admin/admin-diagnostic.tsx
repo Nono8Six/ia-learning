@@ -187,7 +187,14 @@ export function AdminDiagnostic() {
           <div className="space-y-4">
             {steps.map((step) => (
               <div key={step.id} className="flex items-start gap-3">
-                {step.status === 'waiting' && <Badge variant="outline\" className="h-6 w-6 rounded-full p-0 flex items-center justify-center">...</Badge>}
+                {step.status === 'waiting' && (
+                  <Badge
+                    variant="outline"
+                    className="h-6 w-6 rounded-full p-0 flex items-center justify-center"
+                  >
+                    ...
+                  </Badge>
+                )}
                 {step.status === 'running' && <RefreshCw className="h-5 w-5 text-blue-500 animate-spin" />}
                 {step.status === 'success' && <CheckCircle className="h-5 w-5 text-green-600" />}
                 {step.status === 'error' && <XCircle className="h-5 w-5 text-red-600" />}
