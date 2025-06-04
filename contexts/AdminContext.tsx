@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import { supabase, connectionStatus } from '@/lib/supabase';
 import { useAuth } from './AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { AppError, logError } from '@/error';
 import { 
   AdminContextType, 
   AdminUser, 
@@ -23,7 +24,7 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
   
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<AppError | null>(null);
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [courses, setCourses] = useState<CourseData[]>([]);
   const [modules, setModules] = useState<ModuleData[]>([]);
@@ -44,7 +45,7 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         // Vérifier d'abord si nous sommes en ligne
         if (!navigator.onLine || !connectionStatus.online) {
           console.warn('Offline mode detected during admin check');
-          setError("Interface d'administration indisponible hors ligne");
+          setError(new AppError("Interface d'administration indisponible hors ligne"));
           setOfflineMode(true);
           setIsAdmin(false);
           setIsLoading(false);
@@ -62,20 +63,20 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         });
 
         if (error) {
-          console.error('Error checking admin status:', error);
+          logError(error);
           // Si nous avons une erreur de type "network error", activer le mode hors ligne
           if (error.message?.includes('network') || error.message?.includes('fetch') || !navigator.onLine) {
             setOfflineMode(true);
             setIsAdmin(false);
-            setError("Interface d'administration indisponible hors ligne");
+            setError(new AppError("Interface d'administration indisponible hors ligne"));
             toast({
               variant: "warning",
               title: "Mode hors ligne",
               description: "L'interface d'administration est indisponible hors ligne.",
             });
           } else {
-            setError(error.message);
-            throw error;
+            setError(new AppError(error.message));
+            throw new AppError(error.message, error.code);
           }
         } else {
           setIsAdmin(data || false);
@@ -83,10 +84,10 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
           setError(null);
         }
       } catch (error: any) {
-        console.error('Error checking admin status:', error);
+        logError(error);
         // En cas d'erreur, définir isAdmin à false pour éviter un blocage
         setIsAdmin(false);
-        setError(error.message || "Erreur de vérification des droits d'administration");
+        setError(new AppError(error.message || "Erreur de vérification des droits d'administration"));
         
         // Afficher un toast pour informer l'utilisateur
         toast({
@@ -105,7 +106,7 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
       if (isLoading) {
         setIsLoading(false);
         setIsAdmin(false);
-        setError("Délai de connexion dépassé");
+        setError(new AppError("Délai de connexion dépassé"));
         toast({
           variant: "destructive",
           title: "Délai expiré",
@@ -194,8 +195,8 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         .select('*');
 
       if (profilesError) {
-        setError(profilesError.message);
-        throw profilesError;
+        setError(new AppError(profilesError.message));
+        throw new AppError(profilesError.message, profilesError.code);
       }
 
       // Simuler les données de rôles et de progression si la connexion échoue
@@ -238,14 +239,14 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
       setUsers(usersWithRoles);
       setError(null);
     } catch (error: any) {
-      console.error('Error loading users:', error);
+      logError(error);
       
       // Activer le mode hors ligne en cas d'erreur réseau
       if (error.message?.includes('network') || error.message?.includes('fetch') || !navigator.onLine) {
         setOfflineMode(true);
       }
       
-      setError(error.message || "Erreur lors du chargement des utilisateurs");
+      setError(new AppError(error.message || "Erreur lors du chargement des utilisateurs"));
       
       toast({
         variant: "destructive",
@@ -377,8 +378,8 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         .order('order_index');
 
       if (error) {
-        setError(error.message);
-        throw error;
+        setError(new AppError(error.message));
+        throw new AppError(error.message, error.code);
       }
 
       // Simuler les données de modules et d'étudiants
@@ -392,14 +393,14 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
       setCourses(mockCourses);
       setError(null);
     } catch (error: any) {
-      console.error('Error loading courses:', error);
+      logError(error);
       
       // Activer le mode hors ligne en cas d'erreur réseau
       if (error.message?.includes('network') || error.message?.includes('fetch') || !navigator.onLine) {
         setOfflineMode(true);
       }
       
-      setError(error.message || "Erreur lors du chargement des cours");
+      setError(new AppError(error.message || "Erreur lors du chargement des cours"));
       
       toast({
         variant: "destructive",
@@ -501,21 +502,21 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         .order('order_index');
 
       if (error) {
-        setError(error.message);
-        throw error;
+        setError(new AppError(error.message));
+        throw new AppError(error.message, error.code);
       }
       
       setModules(data);
       return data;
     } catch (error: any) {
-      console.error('Error loading modules:', error);
+      logError(error);
       
       // Activer le mode hors ligne en cas d'erreur réseau
       if (error.message?.includes('network') || error.message?.includes('fetch') || !navigator.onLine) {
         setOfflineMode(true);
       }
       
-      setError(error.message || "Erreur lors du chargement des modules");
+      setError(new AppError(error.message || "Erreur lors du chargement des modules"));
       
       toast({
         variant: "destructive",
@@ -583,8 +584,8 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         .single();
 
       if (error) {
-        setError(error.message);
-        throw error;
+        setError(new AppError(error.message));
+        throw new AppError(error.message, error.code);
       }
       
       // Mettre à jour la liste des cours
@@ -597,14 +598,14 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
       
       return data;
     } catch (error: any) {
-      console.error('Error creating course:', error);
+      logError(error);
       
       // Activer le mode hors ligne en cas d'erreur réseau
       if (error.message?.includes('network') || error.message?.includes('fetch') || !navigator.onLine) {
         setOfflineMode(true);
       }
       
-      setError(error.message || "Erreur lors de la création du cours");
+      setError(new AppError(error.message || "Erreur lors de la création du cours"));
       
       toast({
         variant: "destructive",
@@ -644,8 +645,8 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         .single();
 
       if (error) {
-        setError(error.message);
-        throw error;
+        setError(new AppError(error.message));
+        throw new AppError(error.message, error.code);
       }
       
       // Mettre à jour la liste des cours
@@ -658,14 +659,14 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
       
       return data;
     } catch (error: any) {
-      console.error('Error updating course:', error);
+      logError(error);
       
       // Activer le mode hors ligne en cas d'erreur réseau
       if (error.message?.includes('network') || error.message?.includes('fetch') || !navigator.onLine) {
         setOfflineMode(true);
       }
       
-      setError(error.message || "Erreur lors de la mise à jour du cours");
+      setError(new AppError(error.message || "Erreur lors de la mise à jour du cours"));
       
       toast({
         variant: "destructive",
@@ -700,8 +701,8 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         .eq('id', id);
 
       if (error) {
-        setError(error.message);
-        throw error;
+        setError(new AppError(error.message));
+        throw new AppError(error.message, error.code);
       }
       
       // Mettre à jour la liste des cours
@@ -712,14 +713,14 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         description: "Le cours a été supprimé avec succès",
       });
     } catch (error: any) {
-      console.error('Error deleting course:', error);
+      logError(error);
       
       // Activer le mode hors ligne en cas d'erreur réseau
       if (error.message?.includes('network') || error.message?.includes('fetch') || !navigator.onLine) {
         setOfflineMode(true);
       }
       
-      setError(error.message || "Erreur lors de la suppression du cours");
+      setError(new AppError(error.message || "Erreur lors de la suppression du cours"));
       
       toast({
         variant: "destructive",
@@ -754,8 +755,8 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         .single();
 
       if (error) {
-        setError(error.message);
-        throw error;
+        setError(new AppError(error.message));
+        throw new AppError(error.message, error.code);
       }
       
       // Mettre à jour la liste des modules
@@ -770,14 +771,14 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
       
       return data;
     } catch (error: any) {
-      console.error('Error creating module:', error);
+      logError(error);
       
       // Activer le mode hors ligne en cas d'erreur réseau
       if (error.message?.includes('network') || error.message?.includes('fetch') || !navigator.onLine) {
         setOfflineMode(true);
       }
       
-      setError(error.message || "Erreur lors de la création du module");
+      setError(new AppError(error.message || "Erreur lors de la création du module"));
       
       toast({
         variant: "destructive",
@@ -817,8 +818,8 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         .single();
 
       if (error) {
-        setError(error.message);
-        throw error;
+        setError(new AppError(error.message));
+        throw new AppError(error.message, error.code);
       }
       
       // Mettre à jour la liste des modules
@@ -833,14 +834,14 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
       
       return data;
     } catch (error: any) {
-      console.error('Error updating module:', error);
+      logError(error);
       
       // Activer le mode hors ligne en cas d'erreur réseau
       if (error.message?.includes('network') || error.message?.includes('fetch') || !navigator.onLine) {
         setOfflineMode(true);
       }
       
-      setError(error.message || "Erreur lors de la mise à jour du module");
+      setError(new AppError(error.message || "Erreur lors de la mise à jour du module"));
       
       toast({
         variant: "destructive",
@@ -877,8 +878,8 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         .single();
         
       if (moduleError) {
-        setError(moduleError.message);
-        throw moduleError;
+        setError(new AppError(moduleError.message));
+        throw new AppError(moduleError.message, moduleError.code);
       }
       
       const courseId = moduleData.course_id;
@@ -890,8 +891,8 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         .eq('id', id);
 
       if (error) {
-        setError(error.message);
-        throw error;
+        setError(new AppError(error.message));
+        throw new AppError(error.message, error.code);
       }
       
       // Mettre à jour la liste des modules
@@ -904,14 +905,14 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         description: "Le module a été supprimé avec succès",
       });
     } catch (error: any) {
-      console.error('Error deleting module:', error);
+      logError(error);
       
       // Activer le mode hors ligne en cas d'erreur réseau
       if (error.message?.includes('network') || error.message?.includes('fetch') || !navigator.onLine) {
         setOfflineMode(true);
       }
       
-      setError(error.message || "Erreur lors de la suppression du module");
+      setError(new AppError(error.message || "Erreur lors de la suppression du module"));
       
       toast({
         variant: "destructive",
@@ -989,20 +990,20 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         .order('created_at', { ascending: false });
 
       if (error) {
-        setError(error.message);
-        throw error;
+        setError(new AppError(error.message));
+        throw new AppError(error.message, error.code);
       }
 
       setCoupons(data);
     } catch (error: any) {
-      console.error('Error loading coupons:', error);
+      logError(error);
       
       // Activer le mode hors ligne en cas d'erreur réseau
       if (error.message?.includes('network') || error.message?.includes('fetch') || !navigator.onLine) {
         setOfflineMode(true);
       }
       
-      setError(error.message || "Erreur lors du chargement des codes promo");
+      setError(new AppError(error.message || "Erreur lors du chargement des codes promo"));
       
       toast({
         variant: "destructive",
@@ -1070,8 +1071,8 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         .single();
 
       if (error) {
-        setError(error.message);
-        throw error;
+        setError(new AppError(error.message));
+        throw new AppError(error.message, error.code);
       }
       
       // Mettre à jour la liste des codes promo
@@ -1084,14 +1085,14 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
       
       return data;
     } catch (error: any) {
-      console.error('Error creating coupon:', error);
+      logError(error);
       
       // Activer le mode hors ligne en cas d'erreur réseau
       if (error.message?.includes('network') || error.message?.includes('fetch') || !navigator.onLine) {
         setOfflineMode(true);
       }
       
-      setError(error.message || "Erreur lors de la création du code promo");
+      setError(new AppError(error.message || "Erreur lors de la création du code promo"));
       
       toast({
         variant: "destructive",
@@ -1128,8 +1129,8 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         .single();
 
       if (error) {
-        setError(error.message);
-        throw error;
+        setError(new AppError(error.message));
+        throw new AppError(error.message, error.code);
       }
       
       // Mettre à jour la liste des codes promo
@@ -1142,14 +1143,14 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
       
       return data;
     } catch (error: any) {
-      console.error('Error updating coupon:', error);
+      logError(error);
       
       // Activer le mode hors ligne en cas d'erreur réseau
       if (error.message?.includes('network') || error.message?.includes('fetch') || !navigator.onLine) {
         setOfflineMode(true);
       }
       
-      setError(error.message || "Erreur lors de la mise à jour du code promo");
+      setError(new AppError(error.message || "Erreur lors de la mise à jour du code promo"));
       
       toast({
         variant: "destructive",
@@ -1184,8 +1185,8 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         .eq('id', id);
 
       if (error) {
-        setError(error.message);
-        throw error;
+        setError(new AppError(error.message));
+        throw new AppError(error.message, error.code);
       }
       
       // Mettre à jour la liste des codes promo
@@ -1196,14 +1197,14 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         description: "Le code promo a été supprimé avec succès",
       });
     } catch (error: any) {
-      console.error('Error deleting coupon:', error);
+      logError(error);
       
       // Activer le mode hors ligne en cas d'erreur réseau
       if (error.message?.includes('network') || error.message?.includes('fetch') || !navigator.onLine) {
         setOfflineMode(true);
       }
       
-      setError(error.message || "Erreur lors de la suppression du code promo");
+      setError(new AppError(error.message || "Erreur lors de la suppression du code promo"));
       
       toast({
         variant: "destructive",
@@ -1238,7 +1239,7 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         .eq('user_id', userId);
 
       if (deleteError) {
-        setError(deleteError.message);
+        setError(new AppError(deleteError.message));
         throw deleteError;
       }
       
@@ -1251,7 +1252,7 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         }]);
 
       if (insertError) {
-        setError(insertError.message);
+        setError(new AppError(insertError.message));
         throw insertError;
       }
       
@@ -1263,14 +1264,14 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         description: "Le rôle de l'utilisateur a été mis à jour avec succès",
       });
     } catch (error: any) {
-      console.error('Error updating user role:', error);
+      logError(error);
       
       // Activer le mode hors ligne en cas d'erreur réseau
       if (error.message?.includes('network') || error.message?.includes('fetch') || !navigator.onLine) {
         setOfflineMode(true);
       }
       
-      setError(error.message || "Erreur lors de la mise à jour du rôle");
+      setError(new AppError(error.message || "Erreur lors de la mise à jour du rôle"));
       
       toast({
         variant: "destructive",
@@ -1400,11 +1401,16 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
       
       // Gérer les erreurs
       if (userStatsError || courseStatsError || activitiesError || experimentsError) {
-        console.error('Error fetching dashboard data:', { 
-          userStatsError, courseStatsError, activitiesError, experimentsError 
-        });
-        
-        throw new Error('Erreur lors du chargement des données du tableau de bord');
+        logError(
+          new AppError('Error fetching dashboard data', undefined, {
+            userStatsError,
+            courseStatsError,
+            activitiesError,
+            experimentsError,
+          })
+        );
+
+        throw new AppError('Erreur lors du chargement des données du tableau de bord');
       }
       
       // Construire l'objet de données du tableau de bord
@@ -1476,14 +1482,14 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
       setDashboardData(realData);
       setError(null);
     } catch (error: any) {
-      console.error('Error loading dashboard data:', error);
+      logError(error);
       
       // Activer le mode hors ligne en cas d'erreur réseau
       if (error.message?.includes('network') || error.message?.includes('fetch') || !navigator.onLine) {
         setOfflineMode(true);
       }
       
-      setError(error.message || "Erreur lors du chargement des données du tableau de bord");
+      setError(new AppError(error.message || "Erreur lors du chargement des données du tableau de bord"));
       
       toast({
         variant: "destructive",
@@ -1580,7 +1586,7 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
     const handleOffline = () => {
       console.log("Application is offline");
       setOfflineMode(true);
-      setError("Mode hors ligne : certaines fonctionnalités peuvent être limitées");
+      setError(new AppError("Mode hors ligne : certaines fonctionnalités peuvent être limitées"));
     };
     
     window.addEventListener('online', handleOnline);
@@ -1635,7 +1641,7 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
 export const useAdmin = () => {
   const context = useContext(AdminContext);
   if (context === undefined) {
-    throw new Error('useAdmin must be used within an AdminProvider');
+    throw new AppError('useAdmin must be used within an AdminProvider');
   }
   return context;
 };

@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useAdmin } from "@/contexts/AdminContext";
+import { AppError, logError } from "@/error";
 
 export function ConnectionTroubleshooter() {
   const [isRunningTest, setIsRunningTest] = useState(false);
@@ -151,8 +152,9 @@ export function ConnectionTroubleshooter() {
       }
       
     } catch (error) {
-      console.error('Connection tests failed:', error);
-      testResults.details.main = error;
+      const appError = error instanceof AppError ? error : new AppError(error.message || 'Tests échoués');
+      logError(appError);
+      testResults.details.main = appError;
     } finally {
       setResults(testResults);
       setIsRunningTest(false);
@@ -173,12 +175,13 @@ export function ConnectionTroubleshooter() {
         ...prev,
         reloadSuccess: true
       }));
-    } catch (error) {
-      console.error('Failed to reload data:', error);
+    } catch (error: any) {
+      const appError = error instanceof AppError ? error : new AppError(error.message || 'Erreur inconnue');
+      logError(appError);
       setResults(prev => ({
         ...prev,
         reloadSuccess: false,
-        reloadError: error
+        reloadError: appError
       }));
     } finally {
       setIsRunningTest(false);
