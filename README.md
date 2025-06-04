@@ -53,3 +53,9 @@ npm run dev
 - `/lib/supabase.ts` - Client Supabase
 - `/middleware.ts` - Middleware Next.js pour protéger les routes
 - `/app/auth` - Pages d'authentification
+## Tests
+
+Pour lancer les tests unitaires Vitest :
+```bash
+npm run test
+```
