@@ -80,7 +80,9 @@ Pour lancer l'application dans un conteneur Docker :
    ```bash
    docker compose up --build
    ```
-   Les variables d'environnement sont lues depuis le fichier `.env`.
+   Les variables d'environnement du fichier `.env` sont également
+   transmises à la phase de build pour permettre à Next.js de générer
+   correctement l'application.
 
 2. Accédez ensuite à l'application sur [http://localhost:3000](http://localhost:3000).
 
