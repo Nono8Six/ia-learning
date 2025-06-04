@@ -53,3 +53,7 @@ npm run dev
 - `/lib/supabase.ts` - Client Supabase
 - `/middleware.ts` - Middleware Next.js pour protéger les routes
 - `/app/auth` - Pages d'authentification
+
+## Licence
+
+Ce projet est distribué sous licence [MIT](LICENSE).
