@@ -7,6 +7,7 @@ import { Footer } from "@/components/layout/footer";
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { AdminProvider } from "@/contexts/AdminContext";
+import { ErrorBoundary } from "@/components/error-boundary";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,10 +33,12 @@ export default function RootLayout({
         >
           <AuthProvider>
             <AdminProvider>
-              <Header />
-              <main className="min-h-screen">{children}</main>
-              <Footer />
-              <Toaster />
+              <ErrorBoundary>
+                <Header />
+                <main className="min-h-screen">{children}</main>
+                <Footer />
+                <Toaster />
+              </ErrorBoundary>
             </AdminProvider>
           </AuthProvider>
         </ThemeProvider>

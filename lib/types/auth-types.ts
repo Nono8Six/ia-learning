@@ -15,14 +15,16 @@ export type AuthState = {
   isLoading: boolean;
 };
 
+import { AppError } from '@/error';
+
 export type AuthContextType = AuthState & {
-  signUp: (email: string, password: string, metadata?: any) => Promise<{ data: any | null; error: any | null }>;
-  signIn: (email: string, password: string) => Promise<{ data: any | null; error: any | null }>;
+  signUp: (email: string, password: string, metadata?: any) => Promise<{ data: any | null; error: AppError | null }>;
+  signIn: (email: string, password: string) => Promise<{ data: any | null; error: AppError | null }>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
-  resetPassword: (email: string) => Promise<{ data: any | null; error: any | null }>;
-  updateProfile: (updates: Partial<UserProfile>) => Promise<{ data: any | null; error: any | null }>;
-  updatePassword: (password: string) => Promise<{ data: any | null; error: any | null }>;
+  resetPassword: (email: string) => Promise<{ data: any | null; error: AppError | null }>;
+  updateProfile: (updates: Partial<UserProfile>) => Promise<{ data: any | null; error: AppError | null }>;
+  updatePassword: (password: string) => Promise<{ data: any | null; error: AppError | null }>;
 };
 
 export type AuthProviderProps = {

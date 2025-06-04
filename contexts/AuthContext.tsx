@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { AuthContextType, AuthProviderProps, AuthState, UserProfile } from '@/lib/types/auth-types';
 import { Session, User } from '@supabase/supabase-js';
 import { useToast } from '@/hooks/use-toast';
+import { AppError, logError } from '@/error';
 
 // Create context with default values
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -26,7 +27,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) {
-          console.error('Error fetching session:', error);
+          const appError = new AppError('Error fetching session', error.code);
+          logError(appError);
           return;
         }
 
@@ -52,7 +54,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setAuthState({ user: null, session: null, isLoading: false });
         }
       } catch (error) {
-        console.error('Auth initialization error:', error);
+        const appError = new AppError('Auth initialization error');
+        logError(appError);
         setAuthState({ user: null, session: null, isLoading: false });
       }
     };
@@ -150,12 +153,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       return { data, error: null };
     } catch (error: any) {
+      const appError = new AppError(error.message || 'Erreur lors de l\'inscription', error.code);
+      logError(appError);
       toast({
         variant: "destructive",
         title: "Erreur d'inscription",
-        description: error.message || "Une erreur est survenue lors de l'inscription.",
+        description: appError.message,
       });
-      return { data: null, error };
+      return { data: null, error: appError };
     }
   };
 
@@ -168,14 +173,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
 
       if (error) {
-        // Return the error instead of throwing it, let the component handle display
-        return { data: null, error };
+        const appError = new AppError(error.message, error.code);
+        logError(appError);
+        return { data: null, error: appError };
       }
 
       return { data, error: null };
     } catch (error: any) {
-      // Just return the error without showing a toast
-      return { data: null, error };
+      const appError = new AppError(error.message, error.code);
+      logError(appError);
+      return { data: null, error: appError };
     }
   };
 
@@ -193,10 +200,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         throw error;
       }
     } catch (error: any) {
+      const appError = new AppError(error.message || 'Erreur de connexion Google', error.code);
+      logError(appError);
       toast({
         variant: "destructive",
         title: "Erreur de connexion Google",
-        description: error.message || "Une erreur est survenue lors de la connexion avec Google.",
+        description: appError.message,
       });
     }
   };
@@ -210,10 +219,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
       setAuthState({ user: null, session: null, isLoading: false });
     } catch (error: any) {
+      const appError = new AppError(error.message || 'Erreur de déconnexion', error.code);
+      logError(appError);
       toast({
         variant: "destructive",
         title: "Erreur de déconnexion",
-        description: error.message || "Une erreur est survenue lors de la déconnexion.",
+        description: appError.message,
       });
     }
   };
@@ -236,12 +247,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       return { data, error: null };
     } catch (error: any) {
+      const appError = new AppError(error.message || "Erreur de réinitialisation", error.code);
+      logError(appError);
       toast({
         variant: "destructive",
         title: "Erreur de réinitialisation",
-        description: error.message || "Une erreur est survenue lors de l'envoi de l'email de réinitialisation.",
+        description: appError.message,
       });
-      return { data: null, error };
+      return { data: null, error: appError };
     }
   };
 
@@ -279,12 +292,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       return { data, error: null };
     } catch (error: any) {
+      const appError = new AppError(error.message || "Erreur de mise à jour", error.code);
+      logError(appError);
       toast({
         variant: "destructive",
         title: "Erreur de mise à jour",
-        description: error.message || "Une erreur est survenue lors de la mise à jour du profil.",
+        description: appError.message,
       });
-      return { data: null, error };
+      return { data: null, error: appError };
     }
   };
 
@@ -306,12 +321,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       return { data, error: null };
     } catch (error: any) {
+      const appError = new AppError(error.message || "Erreur de mise à jour", error.code);
+      logError(appError);
       toast({
         variant: "destructive",
         title: "Erreur de mise à jour",
-        description: error.message || "Une erreur est survenue lors de la modification du mot de passe.",
+        description: appError.message,
       });
-      return { data: null, error };
+      return { data: null, error: appError };
     }
   };
 
@@ -332,7 +349,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new AppError('useAuth must be used within an AuthProvider');
   }
   return context;
 };

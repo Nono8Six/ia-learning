@@ -116,11 +116,13 @@ export interface DashboardData {
   }[];
 }
 
+import { AppError } from '@/error';
+
 export interface AdminContextType {
   isAdmin: boolean;
   isLoading: boolean;
   offlineMode: boolean;
-  error: string | null;
+  error: AppError | null;
   users: AdminUser[];
   courses: CourseData[];
   modules: ModuleData[];
