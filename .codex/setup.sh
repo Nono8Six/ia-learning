@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-NODE_VERSION="18"
+NODE_VERSION="20"
 
 # Install nvm if not installed
 if [ ! -s "$HOME/.nvm/nvm.sh" ]; then
