@@ -188,7 +188,7 @@ export function Header() {
           {!isLoading && user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost\" className="rounded-full p-0 flex items-center space-x-2 h-auto hover:bg-background">
+                <Button variant="ghost" className="rounded-full p-0 flex items-center space-x-2 h-auto hover:bg-background">
                   <Avatar className="h-10 w-10 border-2 border-indigo-500/20 transition-all duration-300 hover:border-indigo-500">
                     <AvatarImage 
                       src={user.avatar_url || "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=400"} 

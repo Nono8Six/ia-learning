@@ -10,6 +10,18 @@ import {
 import { Check, Clock, FileText, Target } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
+interface ModuleItem {
+  title: string;
+  objectives: string[];
+  deliverables: string[];
+  duration: string;
+}
+
+interface Module {
+  phase: string;
+  items: ModuleItem[];
+}
+
 export function ModulesList() {
   const [activeTab, setActiveTab] = useState("all");
   const [isMounted, setIsMounted] = useState(false);
@@ -24,7 +36,7 @@ export function ModulesList() {
     });
   }, []);
   
-  const modules = [
+  const modules: Module[] = [
     {
       phase: "Phase 1: Fondamentaux de l'IA",
       items: [
@@ -119,7 +131,7 @@ export function ModulesList() {
     }
   ];
 
-  const renderModuleContent = (modulesList) => {
+  const renderModuleContent = (modulesList: Module[]) => {
     return modulesList.map((module, moduleIndex) => (
       <div key={moduleIndex} className="mb-12 section-animated animate-section-in">
         <h3 className="text-2xl font-bold mb-6">{module.phase}</h3>
@@ -197,7 +209,7 @@ export function ModulesList() {
         
         <div className="max-w-4xl mx-auto space-y-10">
           {isMounted ? (
-            <Tabs defaultValue="all\" value={activeTab} onValueChange={setActiveTab} className="mb-8">
+            <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="mb-8">
               <div className="flex justify-center mb-6">
                 <TabsList className="bg-muted/70 p-1">
                   <TabsTrigger value="all" className="rounded-md data-[state=active]:bg-card data-[state=active]:shadow-sm">Toutes les phases</TabsTrigger>

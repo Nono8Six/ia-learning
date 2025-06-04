@@ -49,7 +49,7 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
           setIsAdmin(false);
           setIsLoading(false);
           toast({
-            variant: "warning",
+            variant: "destructive",
             title: "Mode hors ligne",
             description: "L'interface d'administration est indisponible hors ligne.",
           });

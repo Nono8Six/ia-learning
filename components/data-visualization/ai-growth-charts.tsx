@@ -49,7 +49,7 @@ import {
 export function AIGrowthCharts() {
   const [activeTab, setActiveTab] = useState("marché");
   const [isMounted, setIsMounted] = useState(false);
-  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   
   // Initialize component on client side
   useEffect(() => {
@@ -57,7 +57,7 @@ export function AIGrowthCharts() {
   }, []);
 
   // Market data - Croissance du marché mondial de l'IA
-  const marketGrowthData = [
+  const marketGrowthData: { year: string; value: number }[] = [
     { year: "2022", value: 150 },
     { year: "2023", value: 220 },
     { year: "2024", value: 330 },
@@ -70,7 +70,7 @@ export function AIGrowthCharts() {
   ];
 
   // Impact économique par région
-  const economicImpactData = [
+  const economicImpactData: { name: string; value: number }[] = [
     { name: "Amérique du Nord", value: 3600 },
     { name: "Europe", value: 2800 },
     { name: "Chine", value: 3200 },
@@ -80,7 +80,7 @@ export function AIGrowthCharts() {
   ];
 
   // Sectors data - Distribution de l'IA par secteur
-  const sectorDistributionData = [
+  const sectorDistributionData: { name: string; value: number }[] = [
     { name: "Santé", value: 24 },
     { name: "Finance", value: 21 },
     { name: "Retail", value: 16 },
@@ -91,7 +91,7 @@ export function AIGrowthCharts() {
   ];
   
   // Croissance par secteur (%)
-  const sectorGrowthData = [
+  const sectorGrowthData: { sector: string; growth: number }[] = [
     { sector: "Santé", growth: 42 },
     { sector: "Finance", growth: 38 },
     { sector: "Retail", growth: 35 },
@@ -102,7 +102,7 @@ export function AIGrowthCharts() {
   ];
   
   // Investissements mondiaux en IA par secteur (milliards $)
-  const sectorInvestmentData = [
+  const sectorInvestmentData: { sector: string; value: number }[] = [
     { sector: "Santé", value: 43.2 },
     { sector: "Finance", value: 38.6 },
     { sector: "Retail", value: 28.5 },
@@ -113,7 +113,7 @@ export function AIGrowthCharts() {
   ];
 
   // Productivity data - Gain de productivité moyen par cas d'usage
-  const productivityGainData = [
+  const productivityGainData: { useCase: string; gain: number }[] = [
     { useCase: "Automatisation des processus", gain: 48 },
     { useCase: "Analyse de données", gain: 42 },
     { useCase: "Génération de contenu", gain: 39 },
@@ -124,7 +124,7 @@ export function AIGrowthCharts() {
   ];
   
   // Économies de temps hebdomadaires par profession (heures)
-  const timeSavingsData = [
+  const timeSavingsData: { profession: string; value: number }[] = [
     { profession: "Marketing", value: 12.5 },
     { profession: "Finance", value: 9.8 },
     { profession: "Juridique", value: 8.7 },
@@ -135,7 +135,7 @@ export function AIGrowthCharts() {
   ];
   
   // Évolution du ROI des projets IA (%)
-  const roiEvolutionData = [
+  const roiEvolutionData: { year: string; roi: number }[] = [
     { year: "2020", roi: 125 },
     { year: "2021", roi: 168 },
     { year: "2022", roi: 205 },
@@ -145,7 +145,7 @@ export function AIGrowthCharts() {
   ];
 
   // Employment data - Création d'emplois vs. Automatisation
-  const jobsData = [
+  const jobsData: { year: string; created: number; automated: number }[] = [
     { year: "2022", created: 0.8, automated: 0.4 },
     { year: "2023", created: 1.1, automated: 0.6 },
     { year: "2024", created: 1.5, automated: 0.8 },
@@ -158,7 +158,7 @@ export function AIGrowthCharts() {
   ];
   
   // Top 5 compétences IA les plus demandées (indice de demande)
-  const skillsDemandData = [
+  const skillsDemandData: { skill: string; value: number }[] = [
     { skill: "Prompt Engineering", value: 95 },
     { skill: "Data Analysis", value: 90 },
     { skill: "LLM Fine-tuning", value: 85 },
@@ -167,7 +167,7 @@ export function AIGrowthCharts() {
   ];
   
   // Estimation de nouveaux métiers créés par l'IA
-  const newJobsData = [
+  const newJobsData: { category: string; value: number }[] = [
     { category: "IA Gouvernance", value: 320 },
     { category: "Prompt Engineering", value: 280 },
     { category: "IA Éthique", value: 240 },
@@ -188,7 +188,7 @@ export function AIGrowthCharts() {
   ];
   
   // Hover animation for pie charts
-  const renderActiveShape = (props) => {
+  const renderActiveShape = (props: any) => {
     const { 
       cx, cy, innerRadius, outerRadius, startAngle, endAngle,
       fill, payload, percent, value
@@ -251,12 +251,12 @@ export function AIGrowthCharts() {
   };
 
   // Custom tooltip for better design
-  const CustomTooltip = ({ active, payload, label, valuePrefix, valueSuffix }) => {
+  const CustomTooltip = ({ active, payload, label, valuePrefix, valueSuffix }: any) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-card border border-border/40 p-3 rounded-md shadow-lg">
           <p className="font-medium">{label}</p>
-          {payload.map((entry, index) => (
+          {payload.map((entry: any, index: number) => (
             <p key={index} style={{ color: entry.color }} className="text-sm mt-1">
               {entry.name}: {valuePrefix || ""}{entry.value.toLocaleString()}{valueSuffix || ""}
             </p>
@@ -482,7 +482,7 @@ export function AIGrowthCharts() {
                         <ResponsiveContainer width="100%" height="100%">
                           <PieChart className="chart-animated">
                             <Pie
-                              activeIndex={hoveredIndex}
+                              activeIndex={hoveredIndex ?? undefined}
                               activeShape={renderActiveShape}
                               data={sectorDistributionData}
                               cx="50%"
@@ -552,7 +552,7 @@ export function AIGrowthCharts() {
                                   fill={COLORS[index % COLORS.length]} 
                                 />
                               ))}
-                              <LabelList dataKey="growth" position="top" formatter={(value) => `${value}%`} />
+                              <LabelList dataKey="growth" position="top" formatter={(value: any) => `${value}%`} />
                             </Bar>
                           </BarChart>
                         </ResponsiveContainer>
@@ -650,7 +650,7 @@ export function AIGrowthCharts() {
                               barSize={30} 
                               radius={[0, 4, 4, 0]}
                             >
-                              <LabelList dataKey="gain" position="right" formatter={(value) => `${value}%`} />
+                              <LabelList dataKey="gain" position="right" formatter={(value: any) => `${value}%`} />
                             </Bar>
                           </BarChart>
                         </ResponsiveContainer>
@@ -696,7 +696,7 @@ export function AIGrowthCharts() {
                               barSize={40} 
                               radius={[4, 4, 0, 0]}
                             >
-                              <LabelList dataKey="value" position="top" formatter={(value) => `${value}h`} />
+                              <LabelList dataKey="value" position="top" formatter={(value: any) => `${value}h`} />
                             </Bar>
                           </BarChart>
                         </ResponsiveContainer>
