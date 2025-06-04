@@ -173,14 +173,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
 
       if (error) {
-        const appError = new AppError(error.message, error.code);
+        const message =
+          error.message || (error as any).error_description || 'Erreur de connexion';
+        const appError = new AppError(message, error.code);
         logError(appError);
         return { data: null, error: appError };
       }
 
       return { data, error: null };
     } catch (error: any) {
-      const appError = new AppError(error.message, error.code);
+      const message =
+        error.message || (error as any).error_description || 'Erreur de connexion';
+      const appError = new AppError(message, error.code);
       logError(appError);
       return { data: null, error: appError };
     }
