@@ -61,7 +61,8 @@ Pour lancer les tests unitaires Vitest :
 ```bash
 npm run test
 ```
-=======
+
+Le lint et les tests sont exécutés automatiquement via GitHub Actions pour chaque pull request.
 
 ## Licence
 
