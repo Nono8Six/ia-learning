@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 // Get environment variables (required in all environments)
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -303,7 +303,11 @@ const options = {
 };
 
 // Create and export the Supabase client
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, options);
+export const supabase = createClientComponentClient({
+  supabaseUrl,
+  supabaseKey: supabaseAnonKey,
+  options,
+});
 
 // Detailed connection test function
 export const testSupabaseConnection = async () => {
