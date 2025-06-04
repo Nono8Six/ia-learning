@@ -35,7 +35,6 @@ Ce projet utilise Supabase pour l'authentification des utilisateurs avec les fon
 =======
 1. Utilisez Node.js 20 (voir le fichier `.nvmrc`).
 2. Installez les dépendances :
-## >>>>>>> main
 ```bash
 ./.codex/setup.sh
 ```
