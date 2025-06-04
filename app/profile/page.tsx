@@ -241,7 +241,7 @@ export default function ProfilePage() {
                 </CardHeader>
                 <CardContent>
                   {profileError && (
-                    <Alert variant="destructive\" className="mb-6">
+                    <Alert variant="destructive" className="mb-6">
                       <AlertCircle className="h-4 w-4" />
                       <AlertDescription>{profileError}</AlertDescription>
                     </Alert>
@@ -322,7 +322,7 @@ export default function ProfilePage() {
                 </CardHeader>
                 <CardContent>
                   {passwordError && (
-                    <Alert variant="destructive\" className="mb-6">
+                    <Alert variant="destructive" className="mb-6">
                       <AlertCircle className="h-4 w-4" />
                       <AlertDescription>{passwordError}</AlertDescription>
                     </Alert>

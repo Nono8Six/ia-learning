@@ -97,7 +97,7 @@ const classifyError = (error: any): SupabaseErrorType => {
 };
 
 // Enhanced fetch wrapper with detailed error handling and timeout
-const enhancedFetch = async (...args) => {
+const enhancedFetch = async (...args: Parameters<typeof fetch>) => {
   try {
     // If we're offline, fail fast
     if (!connectionStatus.online) {

@@ -104,8 +104,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         options: {
           data: metadata,
           emailRedirectTo: `${window.location.origin}/auth/callback`,
-          // Désactiver la vérification d'email pour l'environnement de développement
-          emailConfirm: false
         },
       });
 
@@ -131,16 +129,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const { data: profile } = await supabase
           .from('profiles')
           .select('*')
-          .eq('id', data.user.id)
+          .eq('id', data.user?.id || '')
           .single();
 
         setAuthState({
           user: {
-            id: data.user.id,
-            email: data.user.email || '',
-            full_name: profile?.full_name || data.user.user_metadata?.full_name,
-            avatar_url: profile?.avatar_url || data.user.user_metadata?.avatar_url,
-            created_at: data.user.created_at,
+            id: data.user?.id || '',
+            email: data.user?.email || '',
+            full_name: profile?.full_name || data.user?.user_metadata?.full_name,
+            avatar_url: profile?.avatar_url || data.user?.user_metadata?.avatar_url,
+            created_at: data.user?.created_at || '',
           },
           session: data.session,
           isLoading: false,
