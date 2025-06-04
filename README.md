@@ -30,18 +30,19 @@ Ce projet utilise Supabase pour l'authentification des utilisateurs avec les fon
 
 ## Développement
 
-1. Installez les dépendances :
+1. Utilisez Node.js 20 (voir le fichier `.nvmrc`).
+2. Installez les dépendances :
 ```bash
 npm install
 ```
 
-2. Copiez `.env.example` en `.env` et remplissez les variables d'environnement :
+3. Copiez `.env.example` en `.env` et remplissez les variables d'environnement :
 ```
 NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 ```
 
-3. Lancez le serveur de développement :
+4. Lancez le serveur de développement :
 ```bash
 npm run dev
 ```
