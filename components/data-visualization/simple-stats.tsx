@@ -116,12 +116,12 @@ export function SimpleStats() {
   ];
 
   // Formatter pour les tooltips
-  const CustomTooltip = ({ active, payload, label, valuePrefix, valueSuffix }) => {
+  const CustomTooltip = ({ active, payload, label, valuePrefix, valueSuffix }: any) => {
     if (active && payload && payload.length) {
       return (
         <div className="p-3 bg-background border border-border rounded-md shadow-lg">
           <p className="text-sm font-bold">{label}</p>
-          {payload.map((entry, index) => (
+          {payload.map((entry: any, index: number) => (
             <p key={index} style={{ color: entry.color }} className="text-sm mt-1">
               {entry.name}: {valuePrefix || ""}{entry.value.toLocaleString()}{valueSuffix || ""}
             </p>
@@ -340,7 +340,7 @@ export function SimpleStats() {
                       label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
                       labelLine={true}
                     >
-                      {sectorData.map((entry, index) => (
+                      {sectorData.map((entry: any, index: number) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
@@ -402,7 +402,7 @@ export function SimpleStats() {
                       barSize={30} 
                       radius={[4, 4, 0, 0]}
                     >
-                      {sectorGrowthData.map((entry, index) => (
+                      {sectorGrowthData.map((entry: any, index: number) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Bar>
@@ -463,7 +463,7 @@ export function SimpleStats() {
                       radius={[0, 4, 4, 0]}
                     >
                       <Label position="right" fill="currentColor" fontSize={12} />
-                      {productivityData.map((entry, index) => (
+                      {productivityData.map((entry: any, index: number) => (
                         <Cell key={`cell-${index}`} fill={COLORS[(index + 5) % COLORS.length]} />
                       ))}
                     </Bar>

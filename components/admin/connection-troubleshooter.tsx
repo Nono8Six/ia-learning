@@ -7,23 +7,24 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { 
-  CheckCircle2, 
-  XCircle, 
-  RefreshCw, 
-  FileCog, 
-  Shield, 
-  Terminal, 
-  Loader2, 
+  CheckCircle2,
+  XCircle,
+  RefreshCw,
+  FileCog,
+  Shield,
+  Terminal,
+  Loader2,
   ArrowRight,
   CheckCheck,
-  Database
+  Database,
+  AlertTriangle
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useAdmin } from "@/contexts/AdminContext";
 
 export function ConnectionTroubleshooter() {
   const [isRunningTest, setIsRunningTest] = useState(false);
-  const [results, setResults] = useState<any>(null);
+  const [results, setResults] = useState<Record<string, any> | null>(null);
   const [supabaseUrl, setSupabaseUrl] = useState(process.env.NEXT_PUBLIC_SUPABASE_URL || '');
   const [supabaseKey, setSupabaseKey] = useState('');
   const [showKeyInput, setShowKeyInput] = useState(false);
@@ -103,7 +104,7 @@ export function ConnectionTroubleshooter() {
         // Check if specific tables exist
         if (!dbError) {
           const tables = ['profiles', 'courses', 'modules', 'coupons', 'user_roles'];
-          const tableResults = {};
+          const tableResults: Record<string, boolean> = {};
           
           for (const table of tables) {
             try {
@@ -244,7 +245,7 @@ export function ConnectionTroubleshooter() {
                   className="mt-1"
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  La clé anonyme (anon public) se trouve dans Project Settings > API
+                  La clé anonyme (anon public) se trouve dans Project Settings &gt; API
                 </p>
               </div>
             )}

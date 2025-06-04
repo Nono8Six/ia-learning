@@ -78,7 +78,7 @@ export function HeroSection() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             {user ? (
               <>
-                <Button asChild size="lg\" className="h-12 px-8 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-pink-500 hover:via-purple-500 hover:to-indigo-500 transition-all duration-500 shadow-lg hover:shadow-indigo-500/20 group rounded-full">
+                <Button asChild size="lg" className="h-12 px-8 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-pink-500 hover:via-purple-500 hover:to-indigo-500 transition-all duration-500 shadow-lg hover:shadow-indigo-500/20 group rounded-full">
                   <Link href="/dashboard">
                     <span className="flex items-center">
                       <LayoutDashboard className="h-4 w-4 mr-2" />

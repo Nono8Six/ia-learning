@@ -22,6 +22,7 @@ export interface CourseData {
   phase: string;
   duration: string;
   status: 'published' | 'draft';
+  order_index: number;
   created_at: string;
   updated_at: string;
   modules_count?: number;
@@ -135,6 +136,7 @@ export interface AdminContextType {
   createModule: (module: Partial<ModuleData>) => Promise<ModuleData | null>;
   updateModule: (id: string, module: Partial<ModuleData>) => Promise<ModuleData | null>;
   deleteModule: (id: string) => Promise<void>;
+  loadCoupons: () => Promise<void>;
   createCoupon: (coupon: Partial<CouponData>) => Promise<CouponData | null>;
   updateCoupon: (id: string, coupon: Partial<CouponData>) => Promise<CouponData | null>;
   deleteCoupon: (id: string) => Promise<void>;
