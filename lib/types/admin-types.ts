@@ -118,6 +118,7 @@ export interface DashboardData {
 export interface AdminContextType {
   isAdmin: boolean;
   isLoading: boolean;
+  offlineMode: boolean;
   error: string | null;
   users: AdminUser[];
   courses: CourseData[];

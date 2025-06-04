@@ -44,11 +44,15 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         // Vérifier d'abord si nous sommes en ligne
         if (!navigator.onLine || !connectionStatus.online) {
           console.warn('Offline mode detected during admin check');
-          setError("Mode hors ligne : certaines fonctionnalités administratives peuvent être limitées");
+          setError("Interface d'administration indisponible hors ligne");
           setOfflineMode(true);
-          // En mode hors ligne, nous supposons que l'utilisateur est admin pour l'interface de démo
-          setIsAdmin(true);
+          setIsAdmin(false);
           setIsLoading(false);
+          toast({
+            variant: "warning",
+            title: "Mode hors ligne",
+            description: "L'interface d'administration est indisponible hors ligne.",
+          });
           return;
         }
 
@@ -62,8 +66,13 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
           // Si nous avons une erreur de type "network error", activer le mode hors ligne
           if (error.message?.includes('network') || error.message?.includes('fetch') || !navigator.onLine) {
             setOfflineMode(true);
-            setIsAdmin(true); // Pour la démo, on considère l'utilisateur comme admin
-            setError("Mode hors ligne : certaines fonctionnalités administratives peuvent être limitées");
+            setIsAdmin(false);
+            setError("Interface d'administration indisponible hors ligne");
+            toast({
+              variant: "warning",
+              title: "Mode hors ligne",
+              description: "L'interface d'administration est indisponible hors ligne.",
+            });
           } else {
             setError(error.message);
             throw error;
@@ -1596,6 +1605,7 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
   const value = {
     isAdmin,
     isLoading,
+    offlineMode,
     error,
     users,
     courses,
