@@ -67,3 +67,17 @@ npm run test
 
 Ce projet est distribué sous licence [MIT](LICENSE).
 # main
+
+## Docker
+
+Pour lancer l'application dans un conteneur Docker :
+
+1. Générez l'image puis démarrez le service :
+   ```bash
+   docker compose up --build
+   ```
+   Les variables d'environnement sont lues depuis le fichier `.env`.
+
+2. Accédez ensuite à l'application sur [http://localhost:3000](http://localhost:3000).
+
+Cette image peut être utilisée en production avec la même commande.

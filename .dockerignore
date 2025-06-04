@@ -1,0 +1,12 @@
+node_modules
+.next
+out
+Dockerfile
+.dockerignore
+.git
+.gitignore
+.env*
+.vscode
+.idea
+supabase
+coverage
