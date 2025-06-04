@@ -1,8 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Get environment variables with fallbacks for development
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://oqmllypaarqvabuvbqga.supabase.co';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xbWxseXBhYXJxdmFidXZicWdhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg5NDEzNzIsImV4cCI6MjA2NDUxNzM3Mn0.WgYEEB7Uc3KiBuMY-J5Nblr6KPQHCzTFGIxadCjY7rk';
+// Get environment variables (required in all environments)
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl) {
+  throw new Error('NEXT_PUBLIC_SUPABASE_URL environment variable is not defined');
+}
+
+if (!supabaseAnonKey) {
+  throw new Error('NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable is not defined');
+}
 
 // Enum for error types to better categorize different failures
 export enum SupabaseErrorType {
