@@ -61,6 +61,10 @@ Pour lancer les tests unitaires Vitest :
 ```bash
 npm run test
 ```
+
+Les tests couvrent les contextes d'authentification et d'administration ainsi
+que plusieurs composants React. Ils utilisent React Testing Library pour simuler
+les interactions utilisateur.
 =======
 
 ## Licence
