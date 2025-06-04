@@ -1571,9 +1571,9 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Écouter les changements de connectivité réseau
   useEffect(() => {
-    const handleOnline = () => {
-      console.log("Application is back online");
-      setOfflineMode(false);
+      const handleOnline = () => {
+        logError(new Error("Application is back online"));
+        setOfflineMode(false);
       // Recharger les données si nous sommes de retour en ligne
       if (isAdmin) {
         loadUsers();
@@ -1583,9 +1583,9 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
       }
     };
     
-    const handleOffline = () => {
-      console.log("Application is offline");
-      setOfflineMode(true);
+      const handleOffline = () => {
+        logError(new Error("Application is offline"));
+        setOfflineMode(true);
       setError(new AppError("Mode hors ligne : certaines fonctionnalités peuvent être limitées"));
     };
     
