@@ -57,7 +57,11 @@ export function SignInForm() {
       // Redirect to dashboard on successful login
       router.push('/dashboard');
     } catch (err: any) {
-      setError(err.message || "Une erreur est survenue lors de la connexion");
+      const message =
+        typeof err === 'string'
+          ? err
+          : err?.message || 'Une erreur est survenue lors de la connexion';
+      setError(message);
     } finally {
       setIsLoading(false);
     }
@@ -71,7 +75,11 @@ export function SignInForm() {
       await signInWithGoogle();
       // Redirect happens automatically through OAuth callback
     } catch (err: any) {
-      setError(err.message || "Une erreur est survenue lors de la connexion avec Google");
+      const message =
+        typeof err === 'string'
+          ? err
+          : err?.message || 'Une erreur est survenue lors de la connexion avec Google';
+      setError(message);
       setIsLoading(false);
     }
   };

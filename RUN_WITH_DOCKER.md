@@ -26,7 +26,11 @@ Ce guide explique comment construire et exécuter l'application en conteneur à 
    ```bash
    docker compose up --build
    ```
-   Cette commande télécharge les dépendances, génère l'application Next.js puis démarre le conteneur `web` exposé sur le port **3000**.
+   Les variables d'environnement définies dans `.env` sont
+   automatiquement injectées au moment du build afin que Next.js
+   compile correctement l'application. Cette commande télécharge les
+   dépendances, génère l'application puis démarre le conteneur `web`
+   exposé sur le port **3000**.
 
 4. **Accéder à l'application** :
    Une fois le conteneur démarré, ouvrez votre navigateur sur [http://localhost:3000](http://localhost:3000).
