@@ -62,7 +62,7 @@ export default function AdminPage() {
             <Alert variant="destructive" className="mb-4">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                {error}
+                {error.message}
               </AlertDescription>
             </Alert>
             <div className="flex flex-col space-y-3">

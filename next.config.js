@@ -1,11 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
+  eslint: {},
+  typescript: {},
   images: { unoptimized: true },
   // Disable webpack persistent caching to fix the errors
   webpack: (config, { dev, isServer }) => {

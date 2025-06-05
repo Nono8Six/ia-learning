@@ -64,7 +64,7 @@ export function ConnectionTroubleshooter() {
           cache: 'no-cache'
         });
         testResults.dns = true;
-      } catch (error) {
+        } catch (error: any) {
         testResults.details.dns = error;
         console.warn('DNS resolution test failed:', error);
       }
@@ -81,7 +81,7 @@ export function ConnectionTroubleshooter() {
         
         testResults.cors = apiCheck.ok;
         testResults.details.apiStatus = apiCheck.status;
-      } catch (error) {
+        } catch (error: any) {
         testResults.details.api = error;
         console.warn('API access test failed:', error);
       }
@@ -91,7 +91,7 @@ export function ConnectionTroubleshooter() {
         const { data: authData, error: authError } = await supabase.auth.getSession();
         testResults.auth = !authError;
         testResults.details.authData = authError ? authError : { success: true };
-      } catch (error) {
+        } catch (error: any) {
         testResults.details.auth = error;
         console.warn('Auth service test failed:', error);
       }
@@ -119,7 +119,7 @@ export function ConnectionTroubleshooter() {
           testResults.tables = Object.values(tableResults).some(result => result === true);
           testResults.details.tables = tableResults;
         }
-      } catch (error) {
+        } catch (error: any) {
         testResults.details.database = error;
         console.warn('Database query test failed:', error);
       }
@@ -146,12 +146,12 @@ export function ConnectionTroubleshooter() {
         }
         
         testResults.details.rls = { error: rlsError, hasData: rlsData && rlsData.length > 0 };
-      } catch (error) {
+      } catch (error: any) {
         testResults.details.rls = error;
         console.warn('RLS policy test failed:', error);
       }
       
-    } catch (error) {
+    } catch (error: any) {
       const appError = error instanceof AppError ? error : new AppError(error.message || 'Tests échoués');
       logError(appError);
       testResults.details.main = appError;
