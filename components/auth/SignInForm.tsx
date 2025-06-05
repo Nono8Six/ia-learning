@@ -27,6 +27,7 @@ type FormValues = z.infer<typeof formSchema>;
 export function SignInForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [invalidCredentials, setInvalidCredentials] = useState(false);
   const { signIn, signInWithGoogle } = useAuth();
   const router = useRouter();
 
@@ -46,11 +47,17 @@ export function SignInForm() {
   const onSubmit = async (data: FormValues) => {
     setIsLoading(true);
     setError(null);
+    setInvalidCredentials(false);
 
     try {
       const { error } = await signIn(data.email, data.password);
-      
+
       if (error) {
+        if (error.code === 'invalid_login_credentials') {
+          setInvalidCredentials(true);
+          setError('Adresse email ou mot de passe incorrect');
+          return;
+        }
         throw error;
       }
       
@@ -108,7 +115,7 @@ export function SignInForm() {
               type="email"
               placeholder="votreemail@exemple.com"
               {...register("email")}
-              className={errors.email ? "border-red-500" : ""}
+              className={errors.email || invalidCredentials ? "border-red-500" : ""}
               disabled={isLoading}
             />
             {errors.email && (
@@ -131,7 +138,7 @@ export function SignInForm() {
               type="password"
               placeholder="••••••••"
               {...register("password")}
-              className={errors.password ? "border-red-500" : ""}
+              className={errors.password || invalidCredentials ? "border-red-500" : ""}
               disabled={isLoading}
             />
             {errors.password && (
