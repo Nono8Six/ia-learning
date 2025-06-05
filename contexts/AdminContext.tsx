@@ -1606,7 +1606,7 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
       loadCoupons();
       loadDashboardData();
     }
-  }, [isAdmin, isLoading, loadCourses, loadCoupons, loadDashboardData, loadUsers]);
+  }, [isAdmin, loadCourses, loadCoupons, loadDashboardData, loadUsers]);
 
   const value = {
     isAdmin,
