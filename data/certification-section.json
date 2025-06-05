@@ -1,0 +1,20 @@
+{
+  "title": "Obtenez votre certification en IA",
+  "description": "À l'issue de la formation, recevez une certification attestant de vos compétences en intelligence artificielle et prompt engineering. Un atout précieux pour votre carrière.",
+  "benefits": [
+    "Certification reconnue par l'industrie",
+    "Augmentez votre valeur sur le marché du travail",
+    "Affichez vos compétences IA sur LinkedIn",
+    "Démontrez votre expertise auprès de vos clients",
+    "Intégrez un réseau de professionnels formés à l'IA"
+  ],
+  "badge": "Plus de 1000 professionnels déjà certifiés",
+  "certificate": {
+    "title": "Certificat d'Excellence",
+    "subtitle": "en Intelligence Artificielle et Prompt Engineering",
+    "name": "Marie Dupont",
+    "message": "a complété avec succès la formation",
+    "id": "IA-CERT-2025-1234",
+    "date": "15 Juin 2025"
+  }
+}

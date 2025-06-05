@@ -32,6 +32,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
+import rgpdRequests from "@/data/rgpd-requests.json";
 import { 
   Shield, 
   FileText, 
@@ -55,6 +56,8 @@ export function RGPDManagement() {
   const [isResponseDialogOpen, setIsResponseDialogOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<any>(null);
   const [responseText, setResponseText] = useState("");
+
+  // Données des demandes RGPD importées
 
   const [rgpdRequests, setRgpdRequests] = useState<RGPDRequest[]>([]);
 
