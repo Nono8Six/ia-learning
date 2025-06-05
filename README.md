@@ -47,6 +47,7 @@ Ce projet utilise Supabase pour l'authentification des utilisateurs avec les fon
 ## Structure du projet
 
 - `/components/auth` - Composants d'authentification (formulaires de connexion, inscription, etc.)
+- `/components/program` - Sections du programme de formation
 - `/contexts/AuthContext.tsx` - Contexte React pour gérer l'état d'authentification
 - `/lib/supabase.ts` - Client Supabase
 - `/middleware.ts` - Middleware Next.js pour protéger les routes
