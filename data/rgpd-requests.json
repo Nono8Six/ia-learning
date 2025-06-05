@@ -1,0 +1,38 @@
+[
+  {
+    "id": "1",
+    "user_name": "Marie Dupont",
+    "email": "marie.dupont@exemple.com",
+    "request_type": "access",
+    "status": "pending",
+    "created_at": "2025-06-01T09:30:00.000Z",
+    "message": "Je souhaite obtenir une copie de toutes mes données personnelles stockées sur votre plateforme, conformément à l'article 15 du RGPD."
+  },
+  {
+    "id": "2",
+    "user_name": "Thomas Martin",
+    "email": "thomas.martin@exemple.com",
+    "request_type": "deletion",
+    "status": "processing",
+    "created_at": "2025-05-28T14:20:00.000Z",
+    "message": "Je souhaite exercer mon droit à l'effacement (article 17 du RGPD) et vous demande de supprimer toutes mes données personnelles de votre plateforme."
+  },
+  {
+    "id": "3",
+    "user_name": "Sophie Bernard",
+    "email": "sophie.bernard@exemple.com",
+    "request_type": "rectification",
+    "status": "completed",
+    "created_at": "2025-05-25T10:15:00.000Z",
+    "message": "Je souhaite mettre à jour certaines informations personnelles incorrectes dans mon profil. Merci de me contacter pour les détails spécifiques."
+  },
+  {
+    "id": "4",
+    "user_name": "Pierre Dubois",
+    "email": "pierre.dubois@exemple.com",
+    "request_type": "access",
+    "status": "rejected",
+    "created_at": "2025-05-20T16:45:00.000Z",
+    "message": "Demande d'accès à toutes mes données incluant les détails de paiement et l'historique complet d'utilisation."
+  }
+]
