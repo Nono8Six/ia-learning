@@ -21,6 +21,26 @@ import {
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
+interface UserStats {
+  active_users?: number;
+  total_users?: number;
+  completed_courses?: number;
+  average_completion_rate?: number;
+}
+
+interface CourseStats {
+  published_courses?: number;
+  total_courses?: number;
+  total_modules?: number;
+}
+
+interface DashboardData {
+  userStats: UserStats;
+  courseStats: CourseStats;
+  recentActivities: any[];
+  activeExperiments: any[];
+}
+
 export function AdminDashboard() {
   const { dashboardData, loadDashboardData, isLoading, error } = useAdmin();
   const [retryCount, setRetryCount] = useState(0);
@@ -73,7 +93,21 @@ export function AdminDashboard() {
   // The 'error' state from useAdmin can be used to display additional diagnostics
   // or persistent error messages, while still rendering the dashboard with (mock) data.
 
-  const { userStats, courseStats, recentActivities, activeExperiments } = dashboardData;
+  const { 
+    userStats = {
+      active_users: 0,
+      total_users: 0,
+      completed_courses: 0,
+      average_completion_rate: 0
+    }, 
+    courseStats = {
+      published_courses: 0,
+      total_courses: 0,
+      total_modules: 0
+    }, 
+    recentActivities = [], 
+    activeExperiments = [] 
+  } = (dashboardData || {}) as DashboardData;
 
   return (
     <div className="space-y-8">
@@ -238,8 +272,8 @@ export function AdminDashboard() {
                     Test comparatif entre différentes variantes.
                   </p> */}
                   <div className="grid grid-cols-2 gap-4 text-sm">
-                    {experiment.variants?.map((variant, index) => (
-                      <div key={index}> {/* Using index as key if variant names aren't unique across experiments */}
+                    {experiment.variants?.map((variant: { name: string; conversion_rate: number }, index: number) => (
+                      <div key={index}>
                         <p className="font-medium">{variant.name}</p>
                         <div className="flex items-center mt-1">
                           <div className="flex-grow mr-2">
