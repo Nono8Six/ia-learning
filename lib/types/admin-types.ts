@@ -155,4 +155,5 @@ export interface AdminContextType {
   updateCoupon: (id: string, coupon: Partial<CouponData>) => Promise<CouponData | null>;
   deleteCoupon: (id: string) => Promise<void>;
   updateUserRole: (userId: string, role: UserRole) => Promise<void>;
+  deleteUser: (userId: string) => Promise<void>;
 }

@@ -30,6 +30,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { 
   Select,
   SelectContent,
@@ -59,12 +70,15 @@ import {
 } from "lucide-react";
 
 export function UserManagement() {
-  const { users, loadUsers, updateUserRole, isLoading } = useAdmin();
+  const { users, loadUsers, updateUserRole, isLoading, deleteUser } = useAdmin();
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredUsers, setFilteredUsers] = useState<AdminUser[]>([]);
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [newRole, setNewRole] = useState<UserRole>('student');
+
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<AdminUser | null>(null);
 
   useEffect(() => {
     loadUsers();
@@ -108,6 +122,26 @@ export function UserManagement() {
     setSelectedUser(user);
     setNewRole(user.role || 'student');
     setIsEditDialogOpen(true);
+  };
+
+  const handleOpenDeleteDialog = (user: AdminUser) => {
+    setUserToDelete(user);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteUser = async () => {
+    if (!userToDelete) return;
+    try {
+      await deleteUser(userToDelete.id);
+      // Success toast is handled in AdminContext
+      // User list is updated in AdminContext
+    } catch (error) {
+      // Error toast is handled in AdminContext
+      // console.error("Failed to delete user:", error); // Context already logs
+    } finally {
+      setIsDeleteDialogOpen(false);
+      setUserToDelete(null);
+    }
   };
 
   // Mettre à jour le rôle de l'utilisateur
@@ -246,7 +280,10 @@ export function UserManagement() {
                             <span>Envoyer un email</span>
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className="cursor-pointer text-destructive">
+                          <DropdownMenuItem
+                            onClick={() => handleOpenDeleteDialog(user)}
+                            className="cursor-pointer text-destructive hover:!text-destructive-foreground hover:!bg-destructive/90"
+                          >
                             <Trash className="h-4 w-4 mr-2" />
                             <span>Supprimer</span>
                           </DropdownMenuItem>
@@ -330,6 +367,30 @@ export function UserManagement() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Boîte de dialogue de confirmation de suppression */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Supprimer l'utilisateur</AlertDialogTitle>
+            <AlertDialogDescription>
+              Êtes-vous sûr de vouloir supprimer l'utilisateur{" "}
+              <strong>{userToDelete?.full_name || userToDelete?.email || 'sélectionné'}</strong>?
+              <br />
+              Cette action est irréversible et supprimera toutes les données associées à cet utilisateur.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setUserToDelete(null)}>Annuler</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteUser}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Supprimer définitivement
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
