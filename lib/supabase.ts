@@ -110,13 +110,13 @@ const enhancedFetch = async (...args: Parameters<typeof fetch>) => {
     }
     
     try {
-      const response = await fetch(...fetchArgs);
+      const response = await fetch(...(fetchArgs as Parameters<typeof fetch>));
       clearTimeout(timeoutId); // Clear the timeout
       
       // Handle HTTP errors
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        const error = new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+        const error: any = new Error(`HTTP Error: ${response.status} ${response.statusText}`);
         error['status'] = response.status;
         error['data'] = errorData;
         throw error;
@@ -132,13 +132,13 @@ const enhancedFetch = async (...args: Parameters<typeof fetch>) => {
       connectionStatus.lastChecked = new Date();
       
       return response;
-    } catch (error) {
+    } catch (error: any) {
       clearTimeout(timeoutId); // Ensure timeout is cleared
       
       // Re-throw the error to be handled by the outer catch
       throw error;
     }
-  } catch (error) {
+  } catch (error: any) {
     // Handle AbortController timeout errors
     if (error.name === 'AbortError') {
       error = new TypeError('Request timeout: Failed to fetch (network may be slow or unavailable)');
@@ -207,7 +207,7 @@ export const withRetry = async (fn: () => Promise<any>, maxRetries = 3) => {
     try {
       connectionStatus.retryAttempt = attempt;
       return await fn();
-    } catch (error) {
+    } catch (error: any) {
       lastError = error;
       
       // Don't retry for certain error types
@@ -259,7 +259,7 @@ export const checkConnection = async () => {
     } else {
       throw new Error(`API responded with status ${response.status}`);
     }
-  } catch (error) {
+  } catch (error: any) {
     // Handle timeout errors specifically
     if (error.name === 'AbortError') {
       error = new Error('Connection check timed out');
@@ -352,7 +352,7 @@ export const testSupabaseConnection = async () => {
         connectionStatus
       }
     };
-  } catch (error) {
+  } catch (error: any) {
     console.warn('Comprehensive Supabase connection test failed:', error);
     
     return {
