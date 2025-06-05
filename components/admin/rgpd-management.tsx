@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { RGPDRequest } from "@/lib/types/admin-types";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
@@ -57,6 +58,24 @@ export function RGPDManagement() {
   const [responseText, setResponseText] = useState("");
 
   // Données des demandes RGPD importées
+
+  const [rgpdRequests, setRgpdRequests] = useState<RGPDRequest[]>([]);
+
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        const res = await fetch('/api/rgpd-requests');
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setRgpdRequests(data);
+        }
+      } catch (err) {
+        console.error('Failed to load RGPD requests', err);
+      }
+    };
+
+    fetchRequests();
+  }, []);
 
   // Formatage de la date
   const formatDate = (dateString: string) => {
