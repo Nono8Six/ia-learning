@@ -168,6 +168,7 @@ export function AdminDiagnostic() {
   useEffect(() => {
     // Run diagnostic on component mount
     runDiagnostic();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
