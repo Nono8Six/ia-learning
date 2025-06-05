@@ -59,102 +59,6 @@ export function AdminDashboard() {
   };
 
   // Afficher l'outil de diagnostic avancé en cas d'erreur
-  if (error) {
-    return (
-      <div className="space-y-6">
-        {/* Nouvel outil de diagnostic qui aide à résoudre les problèmes de connexion */}
-        <AdminDiagnostic />
-        
-        <Card className="border-border/50">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <AlertTriangle className="h-5 w-5 text-amber-500 mr-2" />
-              Problème de connexion
-            </CardTitle>
-            <CardDescription>
-              Impossible de charger les données du tableau de bord
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Alert variant="warning" className="bg-amber-50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-900/30">
-              <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-              <AlertDescription className="text-amber-700 dark:text-amber-300">
-                Nous rencontrons actuellement des difficultés pour accéder à notre base de données. L'outil de diagnostic ci-dessus peut vous aider à identifier et résoudre le problème.
-              </AlertDescription>
-            </Alert>
-            
-            <div className="flex justify-center">
-              <Button 
-                onClick={() => setRetryCount(prev => prev + 1)}
-                className="flex items-center"
-              >
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Réessayer
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-        
-        {/* Afficher des données fictives pour la démo */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 opacity-50">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base font-medium flex items-center">
-                <Users className="h-4 w-4 mr-2 text-primary" />
-                Utilisateurs actifs
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">245</div>
-              <p className="text-xs text-muted-foreground">
-                <span className="text-chart-1">↑ 12%</span> depuis le mois dernier
-              </p>
-              <div className="mt-2 text-xs text-muted-foreground">
-                Total: 320 utilisateurs inscrits
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base font-medium flex items-center">
-                <Book className="h-4 w-4 mr-2 text-primary" />
-                Modules terminés
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">178</div>
-              <p className="text-xs text-muted-foreground">
-                <span className="text-chart-1">↑ 18%</span> depuis le mois dernier
-              </p>
-              <div className="mt-2 text-xs text-muted-foreground">
-                Taux de complétion: 65%
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base font-medium flex items-center">
-                <FileText className="h-4 w-4 mr-2 text-primary" />
-                Cours publiés
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">12</div>
-              <p className="text-xs text-muted-foreground">
-                <span className="text-chart-1">↑ 4%</span> depuis le mois dernier
-              </p>
-              <div className="mt-2 text-xs text-muted-foreground">
-                Total: 15 cours (42 modules)
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
-
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-12">
@@ -164,70 +68,58 @@ export function AdminDashboard() {
     );
   }
 
-  // Utiliser des données fictives si dashboardData est undefined
-  const userStats = dashboardData?.userStats || {
-    active_users: 245,
-    total_users: 320,
-    completed_courses: 178,
-    average_completion_rate: 65
-  };
+  // dashboardData is now guaranteed to be populated (real or mock) by AdminContext
+  // if not loading.
+  // The 'error' state from useAdmin can be used to display additional diagnostics
+  // or persistent error messages, while still rendering the dashboard with (mock) data.
 
-  const courseStats = dashboardData?.courseStats || {
-    published_courses: 12,
-    total_courses: 15,
-    total_modules: 42
-  };
-
-  const recentActivities = dashboardData?.recentActivities || [
-    {
-      id: '1',
-      user_id: 'user1',
-      user_name: 'Marie Dupont',
-      action_type: 'course_completed',
-      action_details: 'A terminé le module "Introduction à l\'IA"',
-      created_at: new Date(Date.now() - 15 * 60 * 1000).toISOString()
-    },
-    {
-      id: '2',
-      user_id: 'user2',
-      user_name: 'Thomas Martin',
-      action_type: 'login',
-      action_details: 'S\'est connecté à la plateforme',
-      created_at: new Date(Date.now() - 45 * 60 * 1000).toISOString()
-    },
-    {
-      id: '3',
-      user_id: 'user3',
-      user_name: 'Sophie Bernard',
-      action_type: 'module_started',
-      action_details: 'A commencé le module "Techniques avancées de prompt"',
-      created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
-    }
-  ];
-
-  const activeExperiments = dashboardData?.activeExperiments || [
-    {
-      id: '1',
-      name: 'Test CTA Landing Page',
-      status: 'active',
-      variants: [
-        { name: 'Variante A', conversion_rate: 3.8 },
-        { name: 'Variante B', conversion_rate: 4.5 }
-      ]
-    },
-    {
-      id: '2',
-      name: 'Test Témoignages',
-      status: 'active',
-      variants: [
-        { name: 'Variante A', conversion_rate: 2.2 },
-        { name: 'Variante B', conversion_rate: 3.7 }
-      ]
-    }
-  ];
+  const { userStats, courseStats, recentActivities, activeExperiments } = dashboardData;
 
   return (
     <div className="space-y-8">
+      {/* Display AdminDiagnostic and error card if there's an error */}
+      {error && (
+        <div className="space-y-6">
+          <AdminDiagnostic />
+          <Card className="border-destructive/50">
+            <CardHeader>
+              <CardTitle className="flex items-center text-destructive">
+                <AlertTriangle className="h-5 w-5 mr-2" />
+                Erreur de chargement des données
+              </CardTitle>
+              <CardDescription>
+                {error.message || "Impossible de charger toutes les données du tableau de bord."}
+                {error.code === 'OFFLINE_DATA' || error.code === 'DATA_FETCH_ERROR'
+                  ? " Les données affichées sont des exemples ou peuvent être incomplètes."
+                  : " Veuillez vérifier votre connexion ou réessayer."}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              { (error.code !== 'OFFLINE_DATA' && error.code !== 'DATA_FETCH_ERROR') && (
+                 <Button
+                  onClick={() => {
+                    setRetryCount(prev => prev + 1); // This will trigger loadDashboardData via useEffect
+                  }}
+                  className="flex items-center"
+                  variant="destructive"
+                 >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Réessayer
+                 </Button>
+              )}
+              { (error.code === 'OFFLINE_DATA' || error.code === 'DATA_FETCH_ERROR') && (
+                <Alert variant="warning" className="bg-amber-50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-900/30">
+                  <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                  <AlertDescription className="text-amber-700 dark:text-amber-300">
+                    Affichage de données de démonstration car le mode hors ligne est activé ou une erreur de récupération des données est survenue.
+                  </AlertDescription>
+                </Alert>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Tableau de bord administrateur</h1>
         <Button size="sm">
@@ -246,12 +138,13 @@ export function AdminDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{userStats.active_users}</div>
+            <div className="text-3xl font-bold">{userStats?.active_users ?? 'N/A'}</div>
             <p className="text-xs text-muted-foreground">
+              {/* Placeholder for dynamic change, adapt as needed */}
               <span className="text-chart-1">↑ 12%</span> depuis le mois dernier
             </p>
             <div className="mt-2 text-xs text-muted-foreground">
-              Total: {userStats.total_users} utilisateurs inscrits
+              Total: {userStats?.total_users ?? 'N/A'} utilisateurs inscrits
             </div>
           </CardContent>
         </Card>
@@ -265,12 +158,13 @@ export function AdminDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{userStats.completed_courses}</div>
+            <div className="text-3xl font-bold">{userStats?.completed_courses ?? 'N/A'}</div>
             <p className="text-xs text-muted-foreground">
+               {/* Placeholder for dynamic change */}
               <span className="text-chart-1">↑ 18%</span> depuis le mois dernier
             </p>
             <div className="mt-2 text-xs text-muted-foreground">
-              Taux de complétion: {userStats.average_completion_rate}%
+              Taux de complétion: {userStats?.average_completion_rate ?? 'N/A'}%
             </div>
           </CardContent>
         </Card>
@@ -284,12 +178,13 @@ export function AdminDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{courseStats.published_courses}</div>
+            <div className="text-3xl font-bold">{courseStats?.published_courses ?? 'N/A'}</div>
             <p className="text-xs text-muted-foreground">
+               {/* Placeholder for dynamic change */}
               <span className="text-chart-1">↑ 4%</span> depuis le mois dernier
             </p>
             <div className="mt-2 text-xs text-muted-foreground">
-              Total: {courseStats.total_courses} cours ({courseStats.total_modules} modules)
+              Total: {courseStats?.total_courses ?? 'N/A'} cours ({courseStats?.total_modules ?? 'N/A'} modules)
             </div>
           </CardContent>
         </Card>
@@ -304,7 +199,7 @@ export function AdminDashboard() {
           </CardHeader>
           <CardContent className="px-2">
             <div className="space-y-4">
-              {recentActivities.map(activity => (
+              {recentActivities?.length > 0 ? recentActivities.map(activity => (
                 <div key={activity.id} className="flex items-center p-2 hover:bg-muted/50 rounded-md">
                   <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center mr-3">
                     <User className="h-4 w-4" />
@@ -317,7 +212,9 @@ export function AdminDashboard() {
                     <MoreVertical className="h-4 w-4" />
                   </Button>
                 </div>
-              ))}
+              )) : (
+                <p className="text-sm text-muted-foreground">Aucune activité récente à afficher.</p>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -329,20 +226,20 @@ export function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {activeExperiments.map(experiment => (
+              {activeExperiments?.length > 0 ? activeExperiments.map(experiment => (
                 <div key={experiment.id} className="border border-border/50 rounded-md p-4">
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="font-medium">{experiment.name}</h3>
-                    <span className="text-xs bg-chart-1/20 text-chart-1 px-2 py-1 rounded-full font-medium">
-                      {experiment.status === 'active' ? 'En cours' : 'Terminé'}
+                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${experiment.status === 'active' ? 'bg-chart-1/20 text-chart-1' : 'bg-muted-foreground/20 text-muted-foreground'}`}>
+                      {experiment.status === 'active' ? 'En cours' : (experiment.status || 'N/A')}
                     </span>
                   </div>
-                  <p className="text-sm text-muted-foreground mb-4">
+                  {/* <p className="text-sm text-muted-foreground mb-4">
                     Test comparatif entre différentes variantes.
-                  </p>
+                  </p> */}
                   <div className="grid grid-cols-2 gap-4 text-sm">
-                    {experiment.variants.map((variant, index) => (
-                      <div key={index}>
+                    {experiment.variants?.map((variant, index) => (
+                      <div key={index}> {/* Using index as key if variant names aren't unique across experiments */}
                         <p className="font-medium">{variant.name}</p>
                         <div className="flex items-center mt-1">
                           <div className="flex-grow mr-2">
@@ -354,7 +251,9 @@ export function AdminDashboard() {
                     ))}
                   </div>
                 </div>
-              ))}
+              )) : (
+                 <p className="text-sm text-muted-foreground">Aucun test A/B actif pour le moment.</p>
+              )}
             </div>
           </CardContent>
         </Card>

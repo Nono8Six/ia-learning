@@ -12,8 +12,51 @@ import {
   ModuleData, 
   CouponData, 
   UserRole,
-  DashboardData
+  DashboardData,
+  UserStatsData, // Renamed from UserStats to match type
+  CourseStatsData // Renamed from CourseStats to match type
+  // RecentActivity and ActiveExperiment are inline types in DashboardData
 } from '@/lib/types/admin-types';
+
+// Default mock structure, ensuring it matches DashboardData type
+const defaultMockDashboardData: DashboardData = {
+  userStats: {
+    total_users: 0,
+    active_users: 0,
+    completed_courses: 0,
+    average_completion_rate: 0,
+  },
+  courseStats: {
+    total_courses: 0,
+    published_courses: 0,
+    total_modules: 0,
+    most_popular_course: {
+      id: 'mock-course-0',
+      title: "N/A",
+      students_count: 0,
+    },
+  },
+  recentActivities: [
+    {
+      id: 'mock-activity-0',
+      user_id: 'mock-user-0',
+      user_name: 'N/A',
+      action_type: 'system_init',
+      action_details: 'Affichage des données de démonstration.',
+      created_at: new Date().toISOString(),
+    }
+  ],
+  activeExperiments: [
+    {
+      id: 'mock-exp-0',
+      name: 'N/A',
+      status: 'inactive',
+      variants: [
+        { name: 'N/A', conversion_rate: 0 },
+      ],
+    }
+  ],
+};
 
 // Création du contexte avec une valeur par défaut undefined
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
@@ -29,7 +72,7 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
   const [courses, setCourses] = useState<CourseData[]>([]);
   const [modules, setModules] = useState<ModuleData[]>([]);
   const [coupons, setCoupons] = useState<CouponData[]>([]);
-  const [dashboardData, setDashboardData] = useState<DashboardData>();
+  const [dashboardData, setDashboardData] = useState<DashboardData>(defaultMockDashboardData); // Initialize with mock
   const [offlineMode, setOfflineMode] = useState(false);
 
   // Vérifier si l'utilisateur est administrateur
@@ -1281,99 +1324,60 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [isAdmin, loadUsers, offlineMode, toast]);
 
+  // Supprimer un utilisateur (simulation)
+  const deleteUser = useCallback(async (userId: string): Promise<void> => {
+    if (!isAdmin) {
+      toast({ variant: "destructive", title: "Non autorisé", description: "Vous n'avez pas les droits pour supprimer un utilisateur." });
+      return Promise.reject(new AppError("User is not an admin.", "AUTH_ERROR"));
+    }
+    if (offlineMode || !navigator.onLine || !connectionStatus.online) {
+      toast({ variant: "warning", title: "Mode hors ligne", description: "La suppression d'utilisateur n'est pas disponible hors ligne." });
+      return Promise.reject(new AppError("Cannot delete user in offline mode.", "OFFLINE_ERROR"));
+    }
+
+    // For this subtask, we simulate the API call
+    return new Promise(async (resolve, reject) => {
+      setIsLoading(true); // Or a specific deletingUserLoading state
+      setError(null);
+
+      // Simulate API delay
+      await new Promise(res => setTimeout(res, 1000));
+
+      // Simulate success or failure (e.g., based on userId for testing)
+      const mockSuccess = true; // Change to false to test error path
+      // To test error: const mockSuccess = userId !== 'error-test-id';
+
+      if (mockSuccess) {
+        setUsers(prevUsers => prevUsers.filter(u => u.id !== userId));
+        toast({ title: "Utilisateur supprimé", description: "L'utilisateur a été supprimé avec succès." });
+        resolve();
+      } else {
+        const err = new AppError(`Erreur simulée lors de la suppression de l'utilisateur ID: ${userId}`, "SIMULATED_DELETE_ERROR");
+        logError(err);
+        setError(err);
+        toast({ variant: "destructive", title: "Erreur de suppression", description: err.message });
+        reject(err);
+      }
+      setIsLoading(false);
+    });
+  }, [isAdmin, offlineMode, toast, user?.id]); // Added user dependency for created_by if used in real API call
+
+
   // Charger les données du tableau de bord
   const loadDashboardData = useCallback(async () => {
     if (!isAdmin) return;
     
     try {
       setIsLoading(true);
-      setError(null);
+      setError(null); // Reset error before loading
       
       // Vérifier si nous sommes en mode hors ligne
       if (offlineMode || !navigator.onLine || !connectionStatus.online) {
-        console.warn('Using mock data for dashboard in offline mode');
-        const dashboardData = {
-          userStats: {
-            total_users: 320,
-            active_users: 245,
-            completed_courses: 178,
-            average_completion_rate: 65
-          },
-          courseStats: {
-            total_courses: 15,
-            published_courses: 12,
-            total_modules: 42,
-            most_popular_course: {
-              id: '1',
-              title: "Introduction à l'IA",
-              students_count: 248
-            }
-          },
-          recentActivities: [
-            {
-              id: '1',
-              user_id: 'user1',
-              user_name: 'Marie Dupont',
-              action_type: 'course_completed',
-              action_details: 'A terminé le module "Introduction à l\'IA"',
-              created_at: new Date(Date.now() - 15 * 60 * 1000).toISOString()
-            },
-            {
-              id: '2',
-              user_id: 'user2',
-              user_name: 'Thomas Martin',
-              action_type: 'login',
-              action_details: 'S\'est connecté à la plateforme',
-              created_at: new Date(Date.now() - 45 * 60 * 1000).toISOString()
-            },
-            {
-              id: '3',
-              user_id: 'user3',
-              user_name: 'Sophie Bernard',
-              action_type: 'module_started',
-              action_details: 'A commencé le module "Techniques avancées de prompt"',
-              created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
-            },
-            {
-              id: '4',
-              user_id: 'user4',
-              user_name: 'Pierre Dubois',
-              action_type: 'signup',
-              action_details: 'S\'est inscrit à la formation',
-              created_at: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString()
-            },
-            {
-              id: '5',
-              user_id: 'user5',
-              user_name: 'Julie Martin',
-              action_type: 'certificate',
-              action_details: 'A obtenu sa certification',
-              created_at: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString()
-            }
-          ],
-          activeExperiments: [
-            {
-              id: '1',
-              name: 'Test CTA Landing Page',
-              status: 'active',
-              variants: [
-                { name: 'Variante A', conversion_rate: 3.8 },
-                { name: 'Variante B', conversion_rate: 4.5 }
-              ]
-            },
-            {
-              id: '2',
-              name: 'Test Témoignages',
-              status: 'active',
-              variants: [
-                { name: 'Variante A', conversion_rate: 2.2 },
-                { name: 'Variante B', conversion_rate: 3.7 }
-              ]
-            }
-          ]
-        };
-
-        setDashboardData(dashboardData);
+        console.warn('Using mock data for dashboard in offline mode or due to connection status.');
+        setDashboardData(defaultMockDashboardData);
+        setIsLoading(false);
+        // Optionally set an error to inform the user they are seeing mock data due to offline status
+        setError(new AppError("Mode hors ligne : affichage de données de démonstration.", "OFFLINE_DATA"));
         return;
       }
       
@@ -1381,189 +1385,73 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
       // Ici, comme c'est simplement pour la démonstration, nous utilisons des données simulées
       
       // Requête pour obtenir les statistiques utilisateurs
-      const { data: userStats, error: userStatsError } = await supabase.rpc('get_user_stats');
+      const { data: userStatsData, error: userStatsError } = await supabase.rpc('get_user_stats');
       
       // Requête pour obtenir les statistiques de cours
-      const { data: courseStats, error: courseStatsError } = await supabase.rpc('get_course_stats');
+      const { data: courseStatsData, error: courseStatsError } = await supabase.rpc('get_course_stats');
       
       // Requête pour obtenir les activités récentes
-      const { data: recentActivities, error: activitiesError } = await supabase
+      const { data: recentActivitiesData, error: activitiesError } = await supabase
         .from('user_activities')
         .select('*')
         .order('created_at', { ascending: false })
         .limit(5);
       
       // Requête pour obtenir les expériments A/B actifs
-      const { data: activeExperiments, error: experimentsError } = await supabase
+      // Ensure 'variants' is a valid part of the select if it's a related table or JSON field
+      const { data: activeExperimentsData, error: experimentsError } = await supabase
         .from('ab_experiments')
-        .select('*, variants(*)')
+        .select('id, name, status, variants') // Adjusted to match DashboardData.activeExperiments type
         .eq('status', 'active');
       
-      // Gérer les erreurs
+      // Gérer les erreurs globales et partielles
       if (userStatsError || courseStatsError || activitiesError || experimentsError) {
-        logError(
-          new AppError('Error fetching dashboard data', undefined, {
-            userStatsError,
-            courseStatsError,
-            activitiesError,
-            experimentsError,
-          })
-        );
+        const errorDetails = {
+          userStatsError: userStatsError?.message,
+          courseStatsError: courseStatsError?.message,
+          activitiesError: activitiesError?.message,
+          experimentsError: experimentsError?.message,
+        };
+        logError(new AppError('Partial or full error fetching dashboard data', undefined, errorDetails));
 
-        throw new AppError('Erreur lors du chargement des données du tableau de bord');
+        // Fallback to complete mock data if any part fails
+        setDashboardData(defaultMockDashboardData);
+        setError(new AppError('Erreur lors du chargement partiel ou total des données du tableau de bord. Affichage de données de démonstration.', 'DATA_FETCH_ERROR', errorDetails));
+        toast({
+          variant: "warning",
+          title: "Données partielles ou indisponibles",
+          description: "Certaines données du tableau de bord n'ont pas pu être chargées. Des données de démonstration sont affichées.",
+        });
+      } else {
+        // Construire l'objet de données du tableau de bord avec les données réelles
+        // Utiliser les données mock par défaut comme base pour chaque section si les données réelles sont nulles ou incomplètes
+        const fetchedDashboardData: DashboardData = {
+          userStats: userStatsData || defaultMockDashboardData.userStats,
+          courseStats: courseStatsData || defaultMockDashboardData.courseStats,
+          recentActivities: recentActivitiesData || defaultMockDashboardData.recentActivities,
+          activeExperiments: activeExperimentsData || defaultMockDashboardData.activeExperiments,
+        };
+        setDashboardData(fetchedDashboardData);
+        setError(null); // Clear any previous error
       }
-      
-      // Construire l'objet de données du tableau de bord
-      const realData = {
-        userStats: userStats || {
-          total_users: 320,
-          active_users: 245,
-          completed_courses: 178,
-          average_completion_rate: 65
-        },
-        courseStats: courseStats || {
-          total_courses: 15,
-          published_courses: 12,
-          total_modules: 42,
-          most_popular_course: {
-            id: '1',
-            title: "Introduction à l'IA",
-            students_count: 248
-          }
-        },
-        recentActivities: recentActivities || [
-          {
-            id: '1',
-            user_id: 'user1',
-            user_name: 'Marie Dupont',
-            action_type: 'course_completed',
-            action_details: 'A terminé le module "Introduction à l\'IA"',
-            created_at: new Date(Date.now() - 15 * 60 * 1000).toISOString()
-          },
-          {
-            id: '2',
-            user_id: 'user2',
-            user_name: 'Thomas Martin',
-            action_type: 'login',
-            action_details: 'S\'est connecté à la plateforme',
-            created_at: new Date(Date.now() - 45 * 60 * 1000).toISOString()
-          },
-          {
-            id: '3',
-            user_id: 'user3',
-            user_name: 'Sophie Bernard',
-            action_type: 'module_started',
-            action_details: 'A commencé le module "Techniques avancées de prompt"',
-            created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
-          }
-        ],
-        activeExperiments: activeExperiments || [
-          {
-            id: '1',
-            name: 'Test CTA Landing Page',
-            status: 'active',
-            variants: [
-              { name: 'Variante A', conversion_rate: 3.8 },
-              { name: 'Variante B', conversion_rate: 4.5 }
-            ]
-          },
-          {
-            id: '2',
-            name: 'Test Témoignages',
-            status: 'active',
-            variants: [
-              { name: 'Variante A', conversion_rate: 2.2 },
-              { name: 'Variante B', conversion_rate: 3.7 }
-            ]
-          }
-        ]
-      };
 
-      setDashboardData(realData);
-      setError(null);
-    } catch (error: any) {
+    } catch (error: any) { // Catch-all for unexpected errors during the process
       logError(error);
       
-      // Activer le mode hors ligne en cas d'erreur réseau
       if (error.message?.includes('network') || error.message?.includes('fetch') || !navigator.onLine) {
         setOfflineMode(true);
+        setError(new AppError("Mode hors ligne : affichage de données de démonstration.", "OFFLINE_DATA", error.message));
+      } else {
+        setError(new AppError(error.message || "Erreur lors du chargement des données du tableau de bord. Affichage de données de démonstration.", 'DASHBOARD_LOAD_FAILED', error.message));
       }
       
-      setError(new AppError(error.message || "Erreur lors du chargement des données du tableau de bord"));
+      setDashboardData(defaultMockDashboardData); // Ensure mock data is set on any error
       
       toast({
         variant: "destructive",
-        title: "Erreur lors du chargement des données",
-        description: error.message || "Une erreur est survenue",
+        title: "Erreur critique lors du chargement des données",
+        description: "Impossible de charger les données du tableau de bord. Des données de démonstration sont affichées.",
       });
-      
-      // Utiliser des données fictives en cas d'erreur
-      const mockData = {
-        userStats: {
-          total_users: 320,
-          active_users: 245,
-          completed_courses: 178,
-          average_completion_rate: 65
-        },
-        courseStats: {
-          total_courses: 15,
-          published_courses: 12,
-          total_modules: 42,
-          most_popular_course: {
-            id: '1',
-            title: "Introduction à l'IA",
-            students_count: 248
-          }
-        },
-        recentActivities: [
-          {
-            id: '1',
-            user_id: 'user1',
-            user_name: 'Marie Dupont',
-            action_type: 'course_completed',
-            action_details: 'A terminé le module "Introduction à l\'IA"',
-            created_at: new Date(Date.now() - 15 * 60 * 1000).toISOString()
-          },
-          {
-            id: '2',
-            user_id: 'user2',
-            user_name: 'Thomas Martin',
-            action_type: 'login',
-            action_details: 'S\'est connecté à la plateforme',
-            created_at: new Date(Date.now() - 45 * 60 * 1000).toISOString()
-          },
-          {
-            id: '3',
-            user_id: 'user3',
-            user_name: 'Sophie Bernard',
-            action_type: 'module_started',
-            action_details: 'A commencé le module "Techniques avancées de prompt"',
-            created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
-          }
-        ],
-        activeExperiments: [
-          {
-            id: '1',
-            name: 'Test CTA Landing Page',
-            status: 'active',
-            variants: [
-              { name: 'Variante A', conversion_rate: 3.8 },
-              { name: 'Variante B', conversion_rate: 4.5 }
-            ]
-          },
-          {
-            id: '2',
-            name: 'Test Témoignages',
-            status: 'active',
-            variants: [
-              { name: 'Variante A', conversion_rate: 2.2 },
-              { name: 'Variante B', conversion_rate: 3.7 }
-            ]
-          }
-        ]
-      };
-      
-      setDashboardData(mockData);
     } finally {
       setIsLoading(false);
     }
@@ -1612,12 +1500,12 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
     isAdmin,
     isLoading,
     offlineMode,
-    error,
+    error, // This error state can be used to show specific UI notifications
     users,
     courses,
     modules,
     coupons,
-    dashboardData,
+    dashboardData, // This will now always be a DashboardData object (real or mock after loading)
     loadUsers,
     loadCourses,
     loadModules,
@@ -1632,7 +1520,8 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
     createCoupon,
     updateCoupon,
     deleteCoupon,
-    updateUserRole
+    updateUserRole,
+    deleteUser
   };
 
   return <AdminContext.Provider value={value}>{children}</AdminContext.Provider>;
