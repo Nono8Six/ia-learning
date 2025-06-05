@@ -186,12 +186,12 @@ BEGIN
   IF NOT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'user_module_progress') THEN
     CREATE TABLE user_module_progress (
       id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-      user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+      user_id uuid REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
       module_id uuid REFERENCES modules(id) ON DELETE CASCADE NOT NULL,
-      completed boolean DEFAULT false,
-      progress integer DEFAULT 0,
+      completed boolean DEFAULT false NOT NULL,
+      progress integer DEFAULT 0 NOT NULL,
       created_at timestamptz DEFAULT now() NOT NULL,
-      updated_at timestamptz DEFAULT now(),
+      updated_at timestamptz DEFAULT now() NOT NULL,
       UNIQUE(user_id, module_id)
     );
 
