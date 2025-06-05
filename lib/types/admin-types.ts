@@ -92,6 +92,18 @@ export interface CourseStatsData {
   };
 }
 
+export interface RGPDRequest {
+  id: string;
+  user_id?: string;
+  user_name: string;
+  email: string;
+  request_type: 'access' | 'deletion' | 'rectification';
+  status: 'pending' | 'processing' | 'completed' | 'rejected';
+  message: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export type AdminTab = 'dashboard' | 'users' | 'courses' | 'coupons' | 'rgpd';
 
 export interface DashboardData {
